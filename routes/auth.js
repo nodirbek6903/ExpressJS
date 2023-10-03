@@ -1,11 +1,17 @@
 import {Router} from "express"
 const router = Router()
 
-router.get("/products",(req,res) => {
-res.render("products")
+router.get("/login",(req,res) => {
+    res.render("login", {
+        title: "Login | Nodirbek",
+        isLogin:true
+    })
 })
-router.get("/add",(req,res) => {
-    res.render("add")
+router.get("/register",(req,res) => {
+    res.render("register", {
+        title: "Register | Nodirbek",
+        isRegister:true
+    })
 })
 
 export default router
