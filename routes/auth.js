@@ -7,28 +7,40 @@ const router = Router()
 router.get("/login",(req,res) => {
     res.render("login", {
         title: "Login | Nodirbek",
-        isLogin:true
+        isLogin:true,
+        loginError: req.flash("loginError"),
     })
 })
 // get register
 router.get("/register",(req,res) => {
     res.render("register", {
         title: "Register | Nodirbek",
-        isRegister:true
+        isRegister:true,
+        registerError: req.flash("registerError"),
     })
 })
 // post login
 router.post("/login", async(req,res) => {
-    const existUser = await User.findOne({email: req.body.email})
-    if(!existUser){
-        console.log("User not found")
-        return 
+    const {email,password}  = req.body
+
+    if(!email || !password){
+        req.flash("loginError","All fields is required")
+        res.redirect("/login")
+        return
     }
 
-    const isPasswordEqual = await bcrypt.compare(req.body.password,existUser.password)
+    const existUser = await User.findOne({email})
+    if(!existUser){
+        req.flash("loginError","User not found")
+        res.redirect("/login")
+        return
+    }
+
+    const isPasswordEqual = await bcrypt.compare(password,existUser.password)
     if(!isPasswordEqual) {
-        console.log("Password wrong")
-        return 
+        req.flash("loginError","Password wrong")
+        res.redirect("/login")
+        return
     }
     
     console.log(existUser);
@@ -36,13 +48,28 @@ router.post("/login", async(req,res) => {
 })
 // post register
 router.post("/register", async (req,res) => {
-    const hashedPassword = await  bcrypt.hash(req.body.password, 10)
+    const {firstname,lastname,email,password} = req.body
+    if(!firstname || !lastname || !email || !password){
+        req.flash("registerError","User not found")
+        res.redirect("/register")
+        return
+    }
+
+    const candidate = await User.findOne({email})
+
+    if(candidate){
+        req.flash("registerError","User already exist")
+        res.redirect("/register")
+        return
+    }
+
+    const hashedPassword = await  bcrypt.hash(password, 10)
 
     try {
         const userData = {
-            firstName: req.body.firstname,
-            lastName: req.body.lastname,
-            email: req.body.email,
+            firstName: firstname,
+            lastName: lastname,
+            email: email,
             password: hashedPassword,
         }
         const user = await User.create(userData)
