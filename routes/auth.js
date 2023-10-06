@@ -50,7 +50,7 @@ router.post("/login", async(req,res) => {
 router.post("/register", async (req,res) => {
     const {firstname,lastname,email,password} = req.body
     if(!firstname || !lastname || !email || !password){
-        req.flash("registerError","User not found")
+        req.flash("registerError","All fields is required")
         res.redirect("/register")
         return
     }
