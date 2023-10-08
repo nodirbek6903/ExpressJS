@@ -6,6 +6,10 @@ import { generateJWTToken } from "../services/token.js"
 const router = Router()
 // get login
 router.get("/login",(req,res) => {
+    if(req.cookies.token){
+        res.redirect("/")
+        return
+    }
     res.render("login", {
         title: "Login | Nodirbek",
         isLogin:true,
@@ -14,12 +18,23 @@ router.get("/login",(req,res) => {
 })
 // get register
 router.get("/register",(req,res) => {
+    if(req.cookies.token){
+        res.redirect("/")
+        return
+    }
     res.render("register", {
         title: "Register | Nodirbek",
         isRegister:true,
         registerError: req.flash("registerError"),
     })
 })
+
+router.get("/logout", (req,res) => {
+    res.clearCookie("token")
+    res.redirect("/")
+    res.send("Logout")
+})
+
 // post login
 router.post("/login", async(req,res) => {
     const {email,password}  = req.body
