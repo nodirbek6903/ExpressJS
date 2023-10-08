@@ -3,7 +3,8 @@ const router = Router()
 
 router.get("/",(req,res) => {
     res.render("index", {
-    title:"Boom Shop | Nodirbek"
+    title:"Boom Shop | Nodirbek",
+    token: true,
     })
 })
 router.get("/products",(req,res) => {
